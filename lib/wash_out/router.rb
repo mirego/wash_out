@@ -80,7 +80,7 @@ module WashOut
 
       soap_parameters = parse_soap_parameters(env)
 
-      action_spec = controller.soap_actions[soap_action]
+      action_spec = controller.soap_actions[soap_action.downcase]
 
       if action_spec
         action = action_spec[:to]

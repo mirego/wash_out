@@ -58,10 +58,11 @@ module WashOut
     # Creates the final parameter hash based on the request spec and xml_data from the request
     def _load_params(spec, xml_data)
       params = HashWithIndifferentAccess.new
+      xml_data = xml_data[:request]
       spec.each do |param|
-        key = param.raw_name.to_sym
+        key = param.name.to_sym
         if xml_data.has_key? key
-          params[param.raw_name] = param.load(xml_data, key)
+          params[param.raw_name.to_sym] = param.load(xml_data, key)
         end
       end
       params
@@ -82,7 +83,7 @@ module WashOut
     def _render_soap(result, options)
       @namespace   = soap_config.namespace
       @operation   = soap_action = request.env['wash_out.soap_action']
-      @action_spec = self.class.soap_actions[soap_action]
+      @action_spec = self.class.soap_actions[soap_action.downcase]
 
       result = { 'value' => result } unless result.is_a? Hash
       result = HashWithIndifferentAccess.new(result)
@@ -212,7 +213,7 @@ module WashOut
     end
 
     def action_spec
-      self.class.soap_actions[soap_action]
+      self.class.soap_actions[soap_action.downcase]
     end
 
     def request_input_tag
